@@ -22,8 +22,8 @@ public class AttrController {
     @RequestMapping("saveAttrInfo")
     @ResponseBody
     public String saveAttrInfo(@RequestBody PmsBaseAttrInfo pmsBaseAttrInfo){
-        attrService.saveAttrInfo(pmsBaseAttrInfo);
-        return  "";
+        String success = attrService.saveAttrInfo(pmsBaseAttrInfo);
+        return  "success";
     }
 
 
@@ -34,4 +34,10 @@ public class AttrController {
         return pmsBaseAttrInfos;
     }
 
+    @RequestMapping("getAttrValueList")
+    @ResponseBody
+    public List<PmsBaseAttrValue> getAttrValueList(String attrId){
+        List<PmsBaseAttrValue> pmsBaseAttrValues = attrService.getAttrValueList(attrId);
+        return pmsBaseAttrValues;
+    }
 }

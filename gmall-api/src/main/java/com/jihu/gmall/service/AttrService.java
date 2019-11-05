@@ -1,11 +1,14 @@
 package com.jihu.gmall.service;
 
 import com.jihu.gmall.bean.PmsBaseAttrInfo;
+import com.jihu.gmall.bean.PmsBaseAttrValue;
 
 import java.util.List;
 
 public interface AttrService {
     List<PmsBaseAttrInfo> attrInfoList(String catalog3Id);
 
-    void saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo);
+    String saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo);
+
+    List<PmsBaseAttrValue> getAttrValueList(String attrId);
 }
