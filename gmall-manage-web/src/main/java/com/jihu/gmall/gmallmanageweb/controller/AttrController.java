@@ -3,7 +3,10 @@ package com.jihu.gmall.gmallmanageweb.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.jihu.gmall.bean.PmsBaseAttrInfo;
 import com.jihu.gmall.bean.PmsBaseAttrValue;
+import com.jihu.gmall.bean.PmsProductInfo;
+import com.jihu.gmall.bean.PmsProductSaleAttr;
 import com.jihu.gmall.service.AttrService;
+import com.jihu.gmall.service.SpuService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,4 +43,5 @@ public class AttrController {
         List<PmsBaseAttrValue> pmsBaseAttrValues = attrService.getAttrValueList(attrId);
         return pmsBaseAttrValues;
     }
+
 }

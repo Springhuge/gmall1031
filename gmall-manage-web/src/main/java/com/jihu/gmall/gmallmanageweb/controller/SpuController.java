@@ -3,7 +3,9 @@ package com.jihu.gmall.gmallmanageweb.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.jihu.gamll.common.util.PmsUploadUtil;
 import com.jihu.gmall.bean.PmsBaseSaleAttr;
+import com.jihu.gmall.bean.PmsProductImage;
 import com.jihu.gmall.bean.PmsProductInfo;
+import com.jihu.gmall.bean.PmsProductSaleAttr;
 import com.jihu.gmall.service.SpuService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +46,24 @@ public class SpuController {
     @ResponseBody
     public String fileUpload(@RequestParam("file") MultipartFile multipartFile){
         //将图片上传到分布式的文件存储系统
-
         //将图片的存储路径返回给页面
         String imurl = PmsUploadUtil.uploadImage(multipartFile);
         return imurl;
     }
+
+    @RequestMapping("spuSaleAttrList")
+    @ResponseBody
+    public List<PmsProductSaleAttr> spuSaleAttrList(String spuId){
+        List<PmsProductSaleAttr> pmsProductSaleAttrs = spuService.spuSaleAttrList(spuId);
+        return pmsProductSaleAttrs;
+    }
+
+    @RequestMapping("spuImageList")
+    @ResponseBody
+    public  List<PmsProductImage> spuImageList(String spuId){
+        List<PmsProductImage> pmsProductImages = spuService.spuImageList(spuId);
+        return pmsProductImages;
+    }
+
+
 }
