@@ -12,6 +12,7 @@ import com.jihu.gmall.manage.mapper.PmsskuInfoMapper;
 import com.jihu.gmall.service.SkuService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,5 +56,21 @@ public class SkuServiceImpl implements SkuService {
             pmsSkuImage.setSkuId(pmsSkuInfo.getId());
             pmsSkuImageMapper.insertSelective(pmsSkuImage);
         }
+    }
+
+    @Override
+    public PmsSkuInfo getSkuById(String skuId) {
+
+        //商品对象
+        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
+        pmsSkuInfo.setId(skuId);
+        PmsSkuInfo skuInfo = pmsskuInfoMapper.selectOne(pmsSkuInfo);
+
+        //sku商品集合
+        PmsSkuImage pmsSkuImage = new PmsSkuImage();
+        pmsSkuImage.setSkuId(skuId);
+        List<PmsSkuImage> pmsSkuImages = pmsSkuImageMapper.select(pmsSkuImage);
+        skuInfo.setSkuImageList(pmsSkuImages);
+        return skuInfo;
     }
 }

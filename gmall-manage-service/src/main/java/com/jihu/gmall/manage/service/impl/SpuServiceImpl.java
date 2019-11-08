@@ -6,6 +6,7 @@ import com.jihu.gmall.manage.mapper.*;
 import com.jihu.gmall.service.SpuService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -80,7 +81,7 @@ public class SpuServiceImpl implements SpuService {
             pmsProductSaleAttrValue.setSaleAttrId(productSaleAttr.getSaleAttrId());
             pmsProductSaleAttrValue.setProductId(spuId);
             //销售属性id用的是系统的字典表中id，不是销售属性表中的主键
-            List<PmsProductSaleAttrValue> pmsProductSaleAttrValuects= pmsProductSaleAttrValueMapper.select(pmsProductSaleAttrValue);
+            List<PmsProductSaleAttrValue> pmsProductSaleAttrValuects = pmsProductSaleAttrValueMapper.select(pmsProductSaleAttrValue);
             productSaleAttr.setSpuSaleAttrValueList(pmsProductSaleAttrValuects);
         }
         return pmsProductSaleAttrs;
@@ -92,5 +93,24 @@ public class SpuServiceImpl implements SpuService {
         pmsProductImage.setProductId(spuId);
         List<PmsProductImage> pmsProductImages = pmsProductImageMapper.select(pmsProductImage);
         return pmsProductImages;
+    }
+
+    @Override
+    public List<PmsProductSaleAttr> spuSaleAttrListCheckBySku(String productId) {
+
+        PmsProductSaleAttr pmsProductSaleAttr = new PmsProductSaleAttr();
+        pmsProductSaleAttr.setProductId(productId);
+        List<PmsProductSaleAttr> pmsProductSaleAttrs = pmsProductSaleAttrmapper.select(pmsProductSaleAttr);
+        for (PmsProductSaleAttr productSaleAttr : pmsProductSaleAttrs) {
+            String saleAttrId = productSaleAttr.getSaleAttrId();
+
+            PmsProductSaleAttrValue pmsProductSaleAttrValue = new PmsProductSaleAttrValue();
+            pmsProductSaleAttrValue.setSaleAttrId(saleAttrId);
+            pmsProductSaleAttrValue.setProductId(productId);
+            List<PmsProductSaleAttrValue> pmsProductSaleAttrValues = pmsProductSaleAttrValueMapper.select(pmsProductSaleAttrValue);
+
+            productSaleAttr.setSpuSaleAttrValueList(pmsProductSaleAttrValues);
+        }
+        return pmsProductSaleAttrs;
     }
 }

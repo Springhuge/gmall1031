@@ -27,9 +27,15 @@
 
         <br>
 
-        <!--页面引入-->
-
         <!--传值给javascript-->
+        <a th:href="'javascript:a(\''+${hello}+'\')'">点我</a>
 
+        <!--页面引入-->
+        <div th:include="indexInner::innerPart">被引入的页面</div>
+<script language="JavaScript">
+    function a(hello) {
+        alert(hello);
+    }
+</script>
 </body>
 </html>
