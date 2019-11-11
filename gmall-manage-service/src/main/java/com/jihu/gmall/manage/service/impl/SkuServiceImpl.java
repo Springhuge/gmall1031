@@ -1,6 +1,7 @@
 package com.jihu.gmall.manage.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.jihu.gmall.bean.PmsSkuAttrValue;
 import com.jihu.gmall.bean.PmsSkuImage;
 import com.jihu.gmall.bean.PmsSkuInfo;
@@ -10,7 +11,10 @@ import com.jihu.gmall.manage.mapper.PmsSkuSaleAttrValueMapper;
 import com.jihu.gmall.manage.mapper.PmsskuAttrValueMapper;
 import com.jihu.gmall.manage.mapper.PmsskuInfoMapper;
 import com.jihu.gmall.service.SkuService;
+import com.jihu.gmall.util.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +33,9 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private PmsSkuImageMapper pmsSkuImageMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public void saveSkuInfo(PmsSkuInfo pmsSkuInfo) {
@@ -76,15 +83,35 @@ public class SkuServiceImpl implements SkuService {
     public PmsSkuInfo getSkuById(String skuId) {
 
         PmsSkuInfo skuInfo = new PmsSkuInfo();
-
         //连接缓存
+        Jedis jedis = redisUtil.getJedis();
+        try {
+            //查询缓存
+            String skuKey = "sku:"+skuId+"info";
+            String skuJson = jedis.get(skuKey);
 
-        //查询缓存
+            if(StringUtils.isNotBlank(skuJson)){
+                skuInfo = JSON.parseObject(skuJson, PmsSkuInfo.class);
+            }else{
+                //如果缓存中没有，查询缓存
+                skuInfo = getSkuByIdFromDb(skuId);
 
-        //如果缓存中没有，查询缓存
+                if(skuInfo != null){
+                    //mysql查询结果存入redis
+                    jedis.set("sku:"+skuId+":info",JSON.toJSONString(skuInfo));
+                }else{
+                    //数据库不存在该sku
+                    //为了防止缓存穿透，null值设置给redis
+                    //3分钟以内缓存不会达到数据库中
+                    jedis.setex("sku:"+skuId+":info",60*3,JSON.toJSONString(""));
+                }
 
-        //mysql结果存入redis
-
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            jedis.close();
+        }
         return skuInfo;
     }
 

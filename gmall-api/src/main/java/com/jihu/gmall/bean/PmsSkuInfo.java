@@ -22,14 +22,6 @@ public class PmsSkuInfo implements Serializable {
     @Transient
     String spuId;
 
-    public String getSpuId() {
-        return spuId;
-    }
-
-    public void setSpuId(String spuId) {
-        this.spuId = spuId;
-    }
-
     @Column
     BigDecimal price;
 
@@ -145,4 +137,13 @@ public class PmsSkuInfo implements Serializable {
     public void setSkuSaleAttrValueList(List<PmsSkuSaleAttrValue> skuSaleAttrValueList) {
         this.skuSaleAttrValueList = skuSaleAttrValueList;
     }
+
+    public String getSpuId() {
+        return spuId;
+    }
+
+    public void setSpuId(String spuId) {
+        this.spuId = spuId;
+    }
+
 }

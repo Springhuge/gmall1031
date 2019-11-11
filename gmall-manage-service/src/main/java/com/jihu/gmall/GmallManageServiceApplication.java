@@ -1,4 +1,4 @@
-package com.jihu.gmall.manage;
+package com.jihu.gmall;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
