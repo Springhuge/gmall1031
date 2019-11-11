@@ -12,7 +12,7 @@
 	<body>
 		<div id="max">
 		<header>
-
+			<input type="hidden" th:value="${skuSaleAttrHashStr}" id="valueSku"/>
 					<div class="min">
 						<ul class="header_ul_left">
 							<li class="glyphicon glyphicon-home"> <a href="shouye.html" class="aa">首页</a></li>
@@ -226,7 +226,7 @@
 							<div class="box-attr-2 clear"  th:each="spuSaleAttr:${spuSaleAttrListCheckBySku}">
 								<dl>
 									<dt th:text="${spuSaleAttr.saleAttrName}">选择颜色</dt>
-									<dd th:each="saleAttrValue:${spuSaleAttr.spuSaleAttrValueList}">
+									<dd th:class="(${saleAttrValue.isChecked}=='1'?'redborder':'')" th:each="saleAttrValue:${spuSaleAttr.spuSaleAttrValueList}">
 										<div th:value="${saleAttrValue.id}" th:text="${saleAttrValue.saleAttrValueName}">
 											  摩卡金
 										</div>
@@ -1020,36 +1020,17 @@
         }
 
         function switchSkuId() {
-            // 被选中属性
-            var checkDivs = $(".redborder div");
-            var valueIds="";
-            // 拼接成属性值串
-            for (var i = 0; i < checkDivs.length; i++) {
-                var saleAttrValueDiv = checkDivs.eq(i);
-                if(i>0){
-                    valueIds= valueIds+"|";
-                }
-                valueIds=valueIds+saleAttrValueDiv.attr("value");
-            }
-            //页面上的hashjson
-            var valuesSku = $("#valuesSku").attr("value");
-            var valuesSkuJson=JSON.parse(valuesSku);
-
-            // 看看hash有没有
-            var skuId= valuesSkuJson[valueIds];
-            // 当前sku
-            var skuIdSelf=$("#skuId").val();
-
-            // 判断是否跳转
-            if(skuId){
-                if(skuId==skuIdSelf){
-                    $("#cartBtn").attr("class","box-btns-two");
-                }else{
-                    window.location.href="/"+skuId+".html";
-                }
-            }else{
-                $("#cartBtn").attr("class","box-btns-two-off");
-            }
+			   var skuSaleAttrValueJsonStr = $("#valueSku").val();
+			   var saleAttrValueIds = $(".redborder div");
+			   var k ="";
+			   $(saleAttrValueIds).each(function (i,saleAttrValueId) {
+				 k = k + $(saleAttrValueId).attr("value") + "|";
+			   });
+			  var kuSaleAttrValueJson = JSON.parse(skuSaleAttrValueJsonStr);
+			  var v_skuid = kuSaleAttrValueJson[k];
+			  if(v_skuid){
+				  window.location.href = "http://localhost:8082/"+v_skuid+".html";
+			  }
         }
 	</script>
 

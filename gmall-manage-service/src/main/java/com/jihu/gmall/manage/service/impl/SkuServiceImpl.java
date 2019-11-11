@@ -58,9 +58,7 @@ public class SkuServiceImpl implements SkuService {
         }
     }
 
-    @Override
-    public PmsSkuInfo getSkuById(String skuId) {
-
+    public PmsSkuInfo getSkuByIdFromDb(String skuId){
         //商品对象
         PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
         pmsSkuInfo.setId(skuId);
@@ -72,5 +70,28 @@ public class SkuServiceImpl implements SkuService {
         List<PmsSkuImage> pmsSkuImages = pmsSkuImageMapper.select(pmsSkuImage);
         skuInfo.setSkuImageList(pmsSkuImages);
         return skuInfo;
+    }
+
+    @Override
+    public PmsSkuInfo getSkuById(String skuId) {
+
+        PmsSkuInfo skuInfo = new PmsSkuInfo();
+
+        //连接缓存
+
+        //查询缓存
+
+        //如果缓存中没有，查询缓存
+
+        //mysql结果存入redis
+
+        return skuInfo;
+    }
+
+    @Override
+    public List<PmsSkuInfo> getSkuSaleAttrValueListBySpu(String productId) {
+
+        List<PmsSkuInfo> pmsSkuInfos = pmsskuInfoMapper.selectSkuSaleAttrValueListBySpu(productId);
+        return pmsSkuInfos;
     }
 }
