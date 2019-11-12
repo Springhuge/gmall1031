@@ -18,6 +18,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SkuServiceImpl implements SkuService {
@@ -80,32 +81,43 @@ public class SkuServiceImpl implements SkuService {
     }
 
     @Override
-    public PmsSkuInfo getSkuById(String skuId) {
-
+    public PmsSkuInfo getSkuById(String skuId,String ip) {
         PmsSkuInfo skuInfo = new PmsSkuInfo();
         //连接缓存
         Jedis jedis = redisUtil.getJedis();
         try {
             //查询缓存
-            String skuKey = "sku:"+skuId+"info";
+            String skuKey = "sku:"+skuId+":info";
             String skuJson = jedis.get(skuKey);
-
             if(StringUtils.isNotBlank(skuJson)){
                 skuInfo = JSON.parseObject(skuJson, PmsSkuInfo.class);
             }else{
-                //如果缓存中没有，查询缓存
-                skuInfo = getSkuByIdFromDb(skuId);
-
-                if(skuInfo != null){
-                    //mysql查询结果存入redis
-                    jedis.set("sku:"+skuId+":info",JSON.toJSONString(skuInfo));
+                //如果缓存中没有，查询mysql
+                //设置分布式锁
+                String token = UUID.randomUUID().toString();
+                String OK = jedis.set("sku:"+skuId+":lock",token,"nx","px",10*1000);//拿到锁的线程有10秒的过期时间
+                if(StringUtils.isNotBlank(OK) && OK.equals("OK")){
+                    //设置成功，有权在10秒的过期时间内访问数据库
+                    skuInfo = getSkuByIdFromDb(skuId);
+                    if(skuInfo != null){
+                        //mysql查询结果存入redis
+                        jedis.set("sku:"+skuId+":info",JSON.toJSONString(skuInfo));
+                    }else{
+                        //数据库不存在该sku
+                        //为了防止缓存穿透，null值设置给redis
+                        //3分钟以内缓存不会达到数据库中
+                        jedis.setex("sku:"+skuId+":info",60*3,JSON.toJSONString(""));
+                    }
+                    //在访问MySQL后，将mysql的分布式锁释放;
+                    String lockToken = jedis.get("sku:"+skuId+":lock");
+                    if(StringUtils.isNotBlank(lockToken)&&lockToken.equals(token)){
+                        //jedis.eval("lua")：可以用lua脚本，在查询到key的同时删除该key，防止高并发下的意外的发生
+                        jedis.del("sku:"+skuId+":lock");//用自己的token确认删除的是自己等待sku的锁
+                    }
                 }else{
-                    //数据库不存在该sku
-                    //为了防止缓存穿透，null值设置给redis
-                    //3分钟以内缓存不会达到数据库中
-                    jedis.setex("sku:"+skuId+":info",60*3,JSON.toJSONString(""));
+                    //设置失败，自旋（该线程在睡眠几秒后，重新尝试访问本方法）
+                    return getSkuById(skuId,ip);
                 }
-
             }
         }catch (Exception e){
             e.printStackTrace();
