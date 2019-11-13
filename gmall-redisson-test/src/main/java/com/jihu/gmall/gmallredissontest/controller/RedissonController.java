@@ -26,15 +26,21 @@ public class RedissonController {
     @ResponseBody
     public String testRedisson(){
         Jedis jedis = redisUtil.getJedis();
-        String v = jedis.get("k");
-        if(StringUtils.isBlank(v)){
-            v = "1";
+        RLock lock = redissonClient.getLock("lock");//声明锁
+        lock.lock();//上锁
+        try {
+            String v = jedis.get("k");
+            if(StringUtils.isBlank(v)){
+                v = "1";
+            }
+            System.out.println("->"+v);
+            jedis.set("k",(Integer.parseInt(v)+1)+"");
+        } finally {
+            jedis.close();
+            //解锁
+            lock.unlock();
         }
-        System.out.println("->"+v);
 
-        jedis.set("k",(Integer.parseInt(v)+1)+"");
-        jedis.close();
-        //RLock lock = redissonClient.getLock("lock");
         return "success";
     }
 }

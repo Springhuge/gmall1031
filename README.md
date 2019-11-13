@@ -66,12 +66,12 @@ redis 常见问题：
         第一种分布式锁：redis自带一个分布式锁，set px nx
         					Key          Value    过期时间  分布式锁参数只有不存在才能参数成功
         			  set sku:108:lock    1  px    60000                  nx  
-        			  
-        			  
+
+
         			  问题1：如果在reids中的锁已经过期了，然后锁过期的那个请求又执行完毕，回来删		锁，删除了其他线程的锁，怎么办？
         			  在加锁的时候给在给v的值加一个随机的值，在删锁的时候先去获取这个锁的值，当值存	 在且值于之前的token相同的时候，在去删除锁。
-        
-        
+
+
         问题2：如果碰巧在查询redis锁还没有删除的时候，正在网络传输时，锁过期了，怎么办？
         可以用lua脚本，在查询到key的同时删除该key，防止高并发下的意外的发生
         
@@ -80,9 +80,149 @@ redis 常见问题：
         jedis.eval(script,Collections.singletonList("lock"),Collections.singletonList(token));
         	
         第二种分布式锁：redisoon框架，一个redis的juc的实现（既有jedis的功能，又有juc的功能）
-        
-        
-      
+
+
+​      
 
 
 =================================================================================    
+
+
+
+使用apache工具httpb对redis进行压力测试，端口为9999
+
+压测命令:ab -c 200 -n 1000 http:nginx
+ab -c 200 -n 1000 http://127.0.0.1/testRedisson
+
+解决端口被占用问题
+
+修改httpd端口
+
+默认httpd端口为80，现在改成800
+
+修改两个地方：
+
+1.修改配置文件httpd.conf
+
+listen 80
+
+把80改成需要的端口
+
+2.修改配置文件**httpd-vhosts.conf**
+
+```
+<VirtualHost *:80>
+    DocumentRoot "E:/wamp/www/test"
+    ServerName test.cm
+    ServerAlias test.cm
+    ErrorLog "logs/dummy-host.example.com-error.log"
+    CustomLog "logs/dummy-host.example.com-access.log" common
+</VirtualHost>
+
+<VirtualHost *:80>
+    DocumentRoot "E:/wamp/www/test"
+    ServerName test.cm
+    ServerAlias test.cm
+    ErrorLog "logs/dummy-host.example.com-error.log"
+    CustomLog "logs/dummy-host.example.com-access.log" common
+</VirtualHost>
+```
+
+把80改成需要的端口
+
+ 
+
+如果是xampp在启动项vi xampp
+
+if testport 80
+then
+$GETTEXT -s "fail."
+echo "XAMPP: " $($GETTEXT 'Another web server is already running.')
+return 1
+
+把80改成需要的端口
+
+
+
+
+
+
+
+搜索引擎
+
+ elasticSearch6 （和elasticSearch5的区别在于，root用户权限、一个库能否建立多个表）
+
+
+
+进行文本搜索（以空间换算时间算法）文本比对文本速度就会快很多。
+
+同类产品solr、ElaticSearch、Hermes（腾讯）（实时检索分析）
+
+ElaticSearch和solr一样都是基于lucene（apache），默认以集群方式工作。
+
+​	
+
+​	Lucene是一个开放源代码的全文检索引擎工具包，但它不是一个完整的全文检索引擎，而是一个全文检索引擎的架构，提供了完整的查询引擎和索引引擎，部分文本分析引擎，搜索引擎产品简介。
+
+
+
+
+
+​	搜索引擎（以百度和goole为例）的工作原理是什么？
+
+​	1.爬虫
+
+​	2.分析
+
+​	3.查询
+
+​	
+
+​	elasticSearch（搜索引擎算法）的算法
+
+​	倒排索引（在内容上建立索引，用内容区匹配索引）
+
+​	Btree（balance tree b-tree）
+
+​	B+tree
+
+
+
+​	es的配置
+
+​	需要改成其他非root用户启动
+
+​	es使用的jvm默认内存大小要大于2G才可以使用
+
+​	Exception in thread "main"      java.nio.file.AccessDeniedException:/opt/es/elasticsearch/elasticsearch-6.
+
+​	在elasticSearch中的config目录下修改jvm.option配置能够使用jvm内存大小，建议使用1到4G
+
+​	在elasticSearch.yml（集群配置文件）配置es的host地址，配成本机地址，外面才可以访问
+
+
+
+es的概念
+
+1.通过（9200端口）http协议进行交互
+
+GＥＴ／_cat/indeices?v
+
+http的get请求，_cat下划线的关键字，indeices索引
+
+<http://XXXX:9200/_cat/indices?v>
+
+2.基本概念
+
+Index 库
+
+Type 表
+
+Document 行（一条数据）
+
+Field 字段
+
+3.第一命令
+
+​	建立索引
+
