@@ -16,6 +16,10 @@ gmall-manage-web 后台管理用户service层 8081
 //gmall-item-service 前台的商品详情服务 8072 直接调用manage-service服务
 gmall-item-web 前台的商品详情展示 8082
 
+gmall-redisson-test redissson测试项目
+
+gmall-web-service-test webservice 服务端学习项目
+gmall-web-service-client-test webservice 客户端学习项目
 =================================================================================
 
 
