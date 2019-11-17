@@ -230,3 +230,14 @@ Field 字段
 
 ​	建立索引
 
+
+
+​	增删改查命令
+
+​	PUT
+
+​	DELETE
+
+​	POST
+
+​	GET
