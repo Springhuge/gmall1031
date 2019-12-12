@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -52,9 +54,10 @@ public class SearchServiceImpl implements SearchService {
             PmsSearchSkuInfo source = hit.source;
 
             Map<String,List<String>> highlight = hit.highlight;
-
-            String skuName = highlight.get("skuName").get(0);
-            source.setSkuName(skuName);
+            if(highlight != null){
+                String skuName = highlight.get("skuName").get(0);
+                source.setSkuName(skuName);
+            }
             pmsSearchSkuInfos.add(source);
         }
         System.out.println(pmsSearchSkuInfos.size());
@@ -106,6 +109,10 @@ public class SearchServiceImpl implements SearchService {
         highlightBuilder.field("skuName");
         highlightBuilder.postTags("</span>");
         searchSourceBuilder.highlight(highlightBuilder);
+
+        //aggs
+        TermsBuilder grouby_attr = AggregationBuilders.terms("groubby_attr").field("skuAttrValueList.valueId");
+        searchSourceBuilder.aggregation(grouby_attr);
 
         //sort
         searchSourceBuilder.sort("id",SortOrder.DESC);
