@@ -263,3 +263,60 @@ Field 字段
 
 
 
+es查询api
+
+Search search =  new Search.Builder("dsl的json语句").addIndex("索引名").addType("表名").builder();
+
+
+
+查询的dsl的封装工具类
+
+```
+{
+
+    //jest的dsl工具
+    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+
+    //bool
+    BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+    //filter
+    boolQueryBuilder.filter(null);
+
+    //must
+    boolQueryBuilder.must(null);
+
+    //query
+    searchSourceBuilder.query(boolQueryBuilder);
+
+    //from
+    searchSourceBuilder.from(0);
+
+    //size
+    searchSourceBuilder.size(20);
+
+    //highlight
+    searchSourceBuilder.highlight(null);
+
+    //用api执行复杂查询
+     List<PmsSearchSkuInfo> pmsSearchSkuInfos = new ArrayList<>();
+     Search search = new Search.Builder("{\n" +
+             "  \"query\": {\n" +
+             "    \"match\": {\n" +
+             "      \"skuName\": \"华为\"\n" +
+             "    }\n" +
+             "  }\n" +
+             "}").addIndex("gmall1031").addType("PmsSkuInfo").build();
+
+    SearchResult execute = jestClient.execute(search);
+
+    List<SearchResult.Hit<PmsSearchSkuInfo, Void>> hits = execute.getHits(PmsSearchSkuInfo.class);
+    for (SearchResult.Hit<PmsSearchSkuInfo, Void> hit : hits) {
+        PmsSearchSkuInfo source = hit.source;
+
+        pmsSearchSkuInfos.add(source);
+    }
+    System.out.println(pmsSearchSkuInfos);
+}
+```

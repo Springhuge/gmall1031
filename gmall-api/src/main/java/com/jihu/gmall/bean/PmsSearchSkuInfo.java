@@ -1,10 +1,11 @@
 package com.jihu.gmall.bean;
 
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class PmsSearchSkuInfo {
+public class PmsSearchSkuInfo implements Serializable {
 
     @Id
     private String id;
