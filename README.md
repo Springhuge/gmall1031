@@ -16,6 +16,9 @@ gmall-manage-web 后台管理用户service层 8081
 //gmall-item-service 前台的商品详情服务 8072 直接调用manage-service服务
 gmall-item-web 前台的商品详情展示 8082
 
+gmall-search-web 搜索服务的前台 8083
+gmall-search-service 搜索服务的后台 8074
+
 gmall-redisson-test redissson测试项目
 
 gmall-web-service-test webservice 服务端学习项目
@@ -241,3 +244,22 @@ Field 字段
 ​	POST
 
 ​	GET
+
+​       es默认不识别中文，需要引入ik分词器
+
+​	ik（中英文分词器）默认有两个：
+
+​	1.ik_smart(简易分词)
+
+​	2.ik_max_word（尽最大分词）
+
+​		
+
+```
+相关系算分数：
+	   查询的关键字在进行分词处理后，与es的文档（分词处理并建立了索引）之间的相关度的高低。
+
+```
+
+
+

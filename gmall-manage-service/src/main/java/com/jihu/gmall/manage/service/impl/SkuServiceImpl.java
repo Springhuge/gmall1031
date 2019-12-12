@@ -133,4 +133,22 @@ public class SkuServiceImpl implements SkuService {
         List<PmsSkuInfo> pmsSkuInfos = pmsskuInfoMapper.selectSkuSaleAttrValueListBySpu(productId);
         return pmsSkuInfos;
     }
+
+    /**
+     * 获取所有的SkuInfo
+     * @return
+     */
+    @Override
+    public List<PmsSkuInfo> getAllSku() {
+        List<PmsSkuInfo> pmsSkuInfos = pmsskuInfoMapper.selectAll();
+        for (PmsSkuInfo pmsSkuInfo : pmsSkuInfos) {
+            String skuId = pmsSkuInfo.getId();
+            PmsSkuAttrValue pmsSkuAttrValue = new PmsSkuAttrValue();
+            pmsSkuAttrValue.setSkuId(skuId);
+            List<PmsSkuAttrValue> pmsSkuAttrValues = pmsskuAttrValueMapper.select(pmsSkuAttrValue);
+
+            pmsSkuInfo.setSkuAttrValueList(pmsSkuAttrValues);
+        }
+        return pmsSkuInfos;
+    }
 }
