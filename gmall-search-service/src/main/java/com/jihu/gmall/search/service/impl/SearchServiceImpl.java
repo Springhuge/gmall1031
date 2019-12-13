@@ -3,9 +3,7 @@ package com.jihu.gmall.search.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.jihu.gmall.bean.PmsSearchParam;
 import com.jihu.gmall.bean.PmsSearchSkuInfo;
-import com.jihu.gmall.bean.PmsSkuAttrValue;
 import com.jihu.gmall.service.SearchService;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
@@ -64,9 +62,14 @@ public class SearchServiceImpl implements SearchService {
         return pmsSearchSkuInfos;
     }
 
+    /**
+     *
+     * @param pmsSearchParam
+     * @return es 搜索查询的json串
+     */
     private String getSearchDsl(PmsSearchParam pmsSearchParam) {
 
-        List<PmsSkuAttrValue> skuAttrValueList = pmsSearchParam.getSkuAttrValueList();
+        String[] skuAttrValueList = pmsSearchParam.getValueId();
         String keyword = pmsSearchParam.getKeyword();
         String catalogId3 = pmsSearchParam.getCatalog3Id();
 
@@ -82,8 +85,8 @@ public class SearchServiceImpl implements SearchService {
             boolQueryBuilder.filter(termQueryBuilder);
         }
         if(skuAttrValueList != null){
-            for (PmsSkuAttrValue pmsSkuAttrValue : skuAttrValueList) {
-                TermQueryBuilder termQueryBuilder = new TermQueryBuilder("skuAttrValueList.valueId",pmsSkuAttrValue.getValueId());
+            for (String s : skuAttrValueList) {
+                TermQueryBuilder termQueryBuilder = new TermQueryBuilder("skuAttrValueList.valueId",s);
                 boolQueryBuilder.filter(termQueryBuilder);
             }
         }
